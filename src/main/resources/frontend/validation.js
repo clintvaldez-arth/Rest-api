@@ -33,7 +33,7 @@ function validateStudentForm(){
         isValid = false;
     }
 
-    // Email validation
+// Email validation
     const emailValue = email.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -53,7 +53,7 @@ function clearValidationStyles() {
     const fields = ['firstName', 'lastName', 'email'];
     fields.forEach(fieldId => {
         const element = document.getElementById(fieldId);
-        const errorSpan = document.getElementById(fieldId + 'Error');
+        const errorSpan = document.getElementById(`${fieldId}Error`);
         if (element) element.classList.remove('invalid');
         if (errorSpan) errorSpan.textContent = '';
         });

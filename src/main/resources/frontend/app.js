@@ -8,7 +8,8 @@ async function createStudent(studentData) {
             method: "POST",
             headers: {
             "Content-Type": "application/json"},
-            body: JSON.stringify(studentData)
+            body: JSON.stringify(studentData),
+            credentials: "include"
         });
 
         if (response.ok) {
@@ -55,7 +56,9 @@ function resetForm() {
 
 async function getAllStudents() {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL, {
+            credentials: "include"
+        });
         if (!response.ok) throw new Error("Network response was not ok");
 
         const students = await response.json();
@@ -75,19 +78,19 @@ async function getAllStudents() {
                     </td>
                 </tr>
             `;
-                tableBody.innerHTML += row;
-            });
-        } catch (error) {
-            console.error("Error fetching students:", error);
-            alert("Failed to fetch students. Is your Spring Boot backend running?");
-        }
+            tableBody.innerHTML += row;
+        });
+    } catch (error) {
+        console.error("Error fetching students:", error);
+        alert("Failed to fetch students. Is your Spring Boot backend running?");
     }
+}
 
 document.addEventListener("DOMContentLoaded", getAllStudents);
 
-async function initializeStudentFormById(studentId) {
+async function initializeStudentFormById(id) {
     try {
-        const response = await fetch(`${API_URL}/${studentId}`);
+        const response = await fetch(`${API_URL}/${id}`);
         if (!response.ok) throw new Error("Network response was not ok");
 
         const student = await response.json();
@@ -113,9 +116,7 @@ async function updateStudent(Id, studentData) {
     try {
         const response = await fetch(`${API_URL}/${Id}`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(studentData)
         });
 
@@ -131,11 +132,12 @@ async function updateStudent(Id, studentData) {
     }
 }
 
-async function deleteStudent(studentId) {
+async function deleteStudent(id) {
     if (confirm("Are you sure you want to delete this student?")) {
         try {
-            const response = await fetch(`${API_URL}/${studentId}`, {
-                method: "DELETE"
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE",
+                credentials: "include"
             });
 
             if (response.ok) {
@@ -155,9 +157,7 @@ async function loginUser(loginDto) {
     try {
         const response = await fetch(`${API_AUTH}/auth_login_session`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(loginDto),
             credentials: "include"
         });
@@ -175,8 +175,7 @@ async function loginUser(loginDto) {
 
 async function logoutUser() {
     try {
-            await fetch(`${API_URL}/logout`, {
-            // const response = await fetch(`${API_AUTH}/logout`,{
+            await fetch(`${API_AUTH}/logout`, {
             method: "POST",
             credentials: "include"
         });

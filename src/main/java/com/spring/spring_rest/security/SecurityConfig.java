@@ -18,35 +18,37 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.spring.spring_rest.service.CustomUserDetailsService;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 	
-//	private CustomUserDetailsService userDetailsService;
+	private CustomUserDetailsService userDetailsService;
+	
+	public SecurityConfig(CustomUserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+	
 	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity security)
-			throws Exception {
-		return security
-				.cors(cors -> cors.configure(security))
-				.csrf(AbstractHttpConfigurer::disable)
-				.sessionManagement(session -> session
-									.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-									)
-				.authorizeHttpRequests(auth -> auth
-										.requestMatchers("/api/auth/**").permitAll()
-										.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-										.requestMatchers("/api/students/**").hasAnyAuthority("USER","ADMIN")
-										.anyRequest().authenticated()
-										)
-				.httpBasic(Customizer.withDefaults())
-				.build();
+	        throws Exception {
+	    return security
+	            .cors(cors -> cors.configure(security))
+	            .csrf(AbstractHttpConfigurer::disable)
+	            .sessionManagement(session -> session
+	                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+	            )
+	            .authorizeHttpRequests(auth -> auth
+	                    .requestMatchers("/api/auth/**").permitAll()
+	                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+	                    .requestMatchers("/api/students/**").hasAnyAuthority("USER", "ADMIN")
+	                    .anyRequest().authenticated()
+	            )
+	            .httpBasic(Customizer.withDefaults())
+	            .build();
 	}
-	
-//	public SecurityConfig(CustomUserDetailsService userDetailsService) {
-//		this.userDetailsService = userDetailsService;
-//	}
 	
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
@@ -55,28 +57,23 @@ public class SecurityConfig {
 	
 	@Bean
 	AuthenticationManager authenticationManager
-		(AuthenticationConfiguration authentication) throws Exception {
+		(AuthenticationConfiguration authentication) throws Exception{
 		return authentication.getAuthenticationManager();
 	}
 	
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
-	    CorsConfiguration configuration = new CorsConfiguration();
-
-	    configuration.setAllowedOrigins(Arrays.asList("http://localhost:5500",
-	                                                    "http://127.0.0.1:5500"));
-	    configuration.setAllowedMethods(Arrays.asList("GET", "POST",
-	                                                    "PUT", "PATCH",
-	                                                    "DELETE", "OPTIONS"));
-	    configuration.setAllowedHeaders(Arrays.asList("Authorization",
-	                                                    "Cache-Control",
-	                                                    "Content-Type"));
-
-	    configuration.setAllowCredentials(true);
-
-	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	    source.registerCorsConfiguration("/**", configuration);
-	    return source;
+		CorsConfiguration configuration = new CorsConfiguration();
+		
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:5500",
+														"http://127.0.0.1:5500"));
+		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization","Cache-Control","Content-Type"));
+		
+		configuration.setAllowCredentials(true);
+		
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
-	
 }
